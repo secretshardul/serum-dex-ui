@@ -494,9 +494,13 @@ export async function listMarket({
   quoteMint: PublicKey;
   baseLotSize: number;
   quoteLotSize: number;
-  dexProgramId: PublicKey;
+  dexProgramId: PublicKey; // contains mainnet address
 }) {
+  console.log('Dex program ID', dexProgramId.toString())
+  console.log('Base mint', baseMint.toString())
+  console.log('Quote mint', quoteMint.toString())
   const market = new Account();
+  console.log('Creating market', market.publicKey.toString())
   const requestQueue = new Account();
   const eventQueue = new Account();
   const bids = new Account();
@@ -551,6 +555,7 @@ export async function listMarket({
   );
 
   const tx2 = new Transaction();
+
   tx2.add(
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
@@ -589,6 +594,8 @@ export async function listMarket({
       space: 65536 + 12,
       programId: dexProgramId,
     }),
+    // This instruction fails due to this transaction
+
     DexInstructions.initializeMarket({
       market: market.publicKey,
       requestQueue: requestQueue.publicKey,
